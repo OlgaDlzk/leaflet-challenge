@@ -17,9 +17,9 @@ function createFeatures(earthquakeData){
     // markers for the earthquakes
     function createCircleMarker(feature, latlng){
        let options = {
-        radius:feature.properties.mag*6,
-        fillColor: chooseColor(feature.properties.mag),
-        color: chooseColor(feature.properties.mag),
+        radius:feature.properties.mag*5,
+        fillColor: chooseColor(feature.geometry.coordinates[2]),
+        color: chooseColor(feature.geometry.coordinates[2]),
         weight: 2,
         opacity: 0.9,
        } 
@@ -34,24 +34,24 @@ function createFeatures(earthquakeData){
     createMap(earthquakes);
     }
 
-    // depending on mag the different color should be chosen. Tried switch case method 
-    function chooseColor(mag){
+    // depending on depth the different color should be chosen. Tried switch case method 
+    function chooseColor(depth){
         switch(true){
             default:
                 return "#dcbeff"; // lavender
             break;
-            case (1.0 <= mag && mag <= 5.0):
+            case (1.0 <= depth && depth <= 15.0):
                 return "#f58231"; // orange
-            case (5.0 <= mag && mag <=10.0):
+            case (15.0 <= depth && depth <=30.0):
                 return "#bfef45"; // lime
-            case (10.0 <= mag && mag <=15.0):
+            case (30.0 <= depth && depth <=55.0):
                 return "#911eb4"; // purple
-            case (15.0 <= mag && mag <= 20.0):
+            case (55.0 <= depth && depth <= 70.0):
                 return "#469990"; // teal           
         }
     }
 
-    // Create map legend 
+    // create map legend 
     let legend = L.control({position: 'bottomleft'});
 
   
@@ -63,9 +63,9 @@ function createFeatures(earthquakeData){
 
     legend.onAdd = function() {
         let div = L.DomUtil.create('div', 'legend');
-        let ranges = [1.0, 5.0, 10.0, 15.0, 20.0];
+        let ranges = [1.0, 15.0, 30.0, 55.0, 70.0];
         let labels = [];
-        let legend = "<h3 style=text-align:center;>Magnitude</h3>";
+        let legend = "<h3 style=text-align:center;>Earthquake Depth</h3>";
 
         div.innerHTML = legend
 
@@ -82,11 +82,11 @@ function createFeatures(earthquakeData){
     };
 
 
-    // Create map
+    // create map
     function createMap(earthquakes) {
 
 
-        // Create the base layers.
+        // create the base layers
         let street = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
             {
@@ -101,25 +101,25 @@ function createFeatures(earthquakeData){
         });
 
 
-        //Create a baseMaps object//
+        // create a baseMaps object
         let baseMaps = {
             "Street Map": street,
             "Topographic Map": topo
         };
 
 
-        // Create overlay object to hold our overlay layer
+        // create overlay object to hold our overlay layer
         let overlayMaps = {
             Earthquakes: earthquakes
         };
 
-        // Create our map, giving it the streetmap and earthquakes layers to display on load
+        // create our map, giving it the streetmap and earthquakes layers to display on load
         let myMap = L.map("map", {
             center: [37.09, -95.71],
             zoom: 5,
             layers: [street, earthquakes]
         });
-        // Add the layer control to the map
+        // add the layer control to the map
         L.control.layers(baseMaps, overlayMaps, {
             collapsed: false
         }).addTo(myMap);
