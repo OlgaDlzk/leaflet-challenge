@@ -1,13 +1,13 @@
-// Store our API endpoing as queryURL
-var queryURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+// store url
+let url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
 
-d3.json(queryURL).then(function(data){
+d3.json(url).then(function(data){
     createFeatures(data.features);
   });
     
 
-function createFeatures(earthquakeData, platesData){
+function createFeatures(earthquakeData){
 
     // popup describing the place and time of the earthquakes
     function onEachFeature(feature, layer){
@@ -21,54 +21,58 @@ function createFeatures(earthquakeData, platesData){
         fillColor: chooseColor(feature.properties.mag),
         color: chooseColor(feature.properties.mag),
         weight: 2,
-        opacity: 0.4,
-        // fillOpacity: 0.4
+        opacity: 0.9,
        } 
        return L.circleMarker(latlng,options);
     }
-    // Create a variable for earthquakes to house latlng, each feature for popup, and cicrle radius/color/weight/opacity
+    // create a variable for earthquakes 
     let earthquakes = L.geoJSON(earthquakeData, {
         onEachFeature: onEachFeature,
         pointToLayer: createCircleMarker
     });
 
-    // Send earthquakes layer to the createMap function - will start creating the map and add features
     createMap(earthquakes);
     }
 
-
+    // depending on mag the different color should be chosen. Tried switch case method 
     function chooseColor(mag){
         switch(true){
-            case(1.0 <= mag && mag <= 2.5):
-                return "#005900"; // Strong blue
-            case (2.5 <= mag && mag <=4.0):
-                return "#443500";
-            case (4.0 <= mag && mag <=5.5):
-                return "#490d00";
-            case (5.5 <= mag && mag <= 8.0):
-                return "#8a034f";
-            case (8.0 <= mag && mag <=20.0):
-                return "#005a8a";
             default:
-                return "#585858";
+                return "#dcbeff"; // lavender
+            break;
+            case (1.0 <= mag && mag <= 5.0):
+                return "#f58231"; // orange
+            case (5.0 <= mag && mag <=10.0):
+                return "#bfef45"; // lime
+            case (10.0 <= mag && mag <=15.0):
+                return "#911eb4"; // purple
+            case (15.0 <= mag && mag <= 20.0):
+                return "#469990"; // teal           
         }
     }
 
     // Create map legend 
-    let legend = L.control({position: 'bottomright'});
+    let legend = L.control({position: 'bottomleft'});
+
+  
+    // Generic class for handling a tiled grid of HTML elements. 
+    // This is the base class for all tile layers and replaces TileLayer.Canvas. 
+    // GridLayer can be extended to create a tiled grid of HTML elements like <canvas>, <img> or <div>. 
+    // GridLayer will handle creating and animating these DOM elements for you.
+   
 
     legend.onAdd = function() {
-        var div = L.DomUtil.create('div', 'info legend');
-        var grades = [1.0, 2.5, 4.0, 5.5, 8.0];
-        var labels = [];
-        var legendInfo = "<h3>Magnitude</h3>";
+        let div = L.DomUtil.create('div', 'legend');
+        let ranges = [1.0, 5.0, 10.0, 15.0, 20.0];
+        let labels = [];
+        let legend = "<h3 style=text-align:center;>Magnitude</h3>";
 
-        div.innerHTML = legendInfo
+        div.innerHTML = legend
 
         // go through each magnitude item to label and color the legend
         // push to labels array as list item
-        for (var i = 0; i < grades.length; i++) {
-            labels.push('<ul style="background-color:' + chooseColor(grades[i] + 1) + '"> <span>' + grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '' : '+') + '</span></ul>');
+        for (var i = 0; i < ranges.length; i++) {
+            labels.push('<ul style="background-color:' + chooseColor(ranges[i] + 1) + '"> <span>' + ranges[i] + (ranges[i + 1] ? '&ndash;' + ranges[i + 1] + '' : '+') + '</span></ul>');
             }
 
         // add each label list item to the div under the <ul> tag
