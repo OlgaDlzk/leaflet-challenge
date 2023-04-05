@@ -14,5 +14,6 @@ Using Leaflet, created a map that plots all the earthquakes for the last week.
     Created a legend that will provide context for the map data.
     
     
-![leaflet](https://user-images.githubusercontent.com/74025870/229953745-c5220411-6c19-4b33-85d8-7f101a76fe8c.PNG)
+
+![leaflet](https://user-images.githubusercontent.com/74025870/229957094-792c3e69-6641-4bda-acdf-73bae6b9d172.PNG)
 
